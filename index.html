@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MD.NAiM HOSSAiN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0a0a0a;
+            --text-color: #ffffff;
+            --secondary-text: #9aa0a6;
+            --accent-glow: rgba(255, 255, 255, 0.1);
+            --border-color: rgba(255, 255, 255, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #444; }
+
+        /* Glassmorphism */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--border-color);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.05);
+            transform: translateY(-5px);
+        }
+
+        /* Background Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Animations */
+        .glow-text { text-shadow: 0 0 15px rgba(255, 255, 255, 0.3); }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .animate-float { animation: float 4s ease-in-out infinite; }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Typing cursor */
+        .cursor {
+            display: inline-block;
+            width: 3px;
+            background-color: white;
+            margin-left: 5px;
+            animation: blink 0.8s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Skill Meter Animation */
+        .circle-progress {
+            transition: stroke-dashoffset 1.5s ease-out;
+            stroke-dasharray: 251.2; /* 2 * PI * 40 */
+            stroke-dashoffset: 251.2;
+        }
+
+        .border-text {
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.2);
+            color: transparent;
+        }
+
+        /* Navigation glass */
+        nav.scrolled {
+            padding: 0.75rem 1.5rem;
+            background: rgba(10, 10, 10, 0.8);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .social-link {
+            transition: all 0.3s ease;
+        }
+        .social-link:hover {
+            background: white;
+            color: black;
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body>
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Header -->
+    <header class="fixed top-0 left-0 w-full z-50 px-6 py-4 md:px-12 md:py-6">
+        <nav class="max-w-7xl mx-auto flex items-center justify-between glass px-6 py-3 rounded-full border border-white/10 shadow-lg transition-all duration-300">
+            <div class="text-xl font-bold tracking-tighter text-white glow-text uppercase">
+                Naim<span class="text-white/40">Hossain</span>
+            </div>
+            <ul class="hidden md:flex items-center gap-8 text-xs font-mono uppercase tracking-widest text-white/50">
+                <li><a href="#about" class="hover:text-white transition-colors">About</a></li>
+                <li><a href="#skills" class="hover:text-white transition-colors">Skills</a></li>
+                <li><a href="#experience" class="hover:text-white transition-colors">Experience</a></li>
+                <li><a href="#projects" class="hover:text-white transition-colors">Projects</a></li>
+            </ul>
+            <a href="#contact" class="bg-white text-black px-6 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:bg-white/90 transition-all hover:scale-105">
+                Connect
+            </a>
+        </nav>
+    </header>
+
+    <main class="relative z-10">
+        <!-- Hero Section -->
+        <section id="about" class="h-screen flex flex-col items-center justify-center px-6 text-center">
+            <div class="reveal">
+                <div class="inline-block px-3 py-1 mb-6 border border-white/20 rounded-full text-[10px] uppercase tracking-[0.3em] text-white/60 glass">
+                    Available for TOMAR BIRIYANI STYle collaborations
+                </div>
+                <h1 class="text-6xl md:text-9xl font-bold tracking-tighter mb-4 glow-text uppercase">
+                    Hi, I’m <br> MD.NAiM HOSSAiN
+                </h1>
+                <div class="h-8 md:h-12 text-xl md:text-3xl font-mono text-white/40 mb-12">
+                    <span id="typing-text"></span><span class="cursor"></span>
+                </div>
+                <p class="max-w-xl mx-auto text-white/60 leading-relaxed mb-10 text-sm md:text-base">
+                    "I am a tech geek master. You can share all your problems with me, and I will easily solve them for you."
+                </p>
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <a href="#projects" class="px-10 py-4 bg-white text-black font-bold rounded-full hover:bg-white/90 transition-all hover:scale-105 text-sm uppercase tracking-widest">
+                        View Projects
+                    </a>
+                    <a href="#contact" class="px-10 py-4 border border-white/20 rounded-full font-bold hover:bg-white/10 transition-all glass text-sm uppercase tracking-widest">
+                        Let's Talk
+                    </a>
+                </div>
+            </div>
+            <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-float">
+                <div class="w-[1px] h-16 bg-gradient-to-b from-white to-transparent opacity-30"></div>
+            </div>
+        </section>
+
+        <!-- Social Media Section -->
+        <section id="socials" class="py-12 px-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="reveal flex flex-wrap justify-center items-center gap-6 glass p-8 rounded-[2.5rem] border-white/5">
+                    <a href="https://www.facebook.com/knaimhossain" class="social-link w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 glass" title="Facebook">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.52-4.48-10-10-10S2 6.48 2 12c0 4.84 3.44 8.87 8 9.8V15H8v-3h2V9.5C10 7.57 11.57 6 13.5 6H16v3h-2c-.55 0-1 .45-1 1v2h3v3h-3v6.95c5.05-.5 9-4.76 9-9.95z"/></svg>
+                    </a>
+                    <a href="https://www.youtube.com/@knaimshow" class="social-link w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 glass" title="YouTube">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+                    </a>
+                    <a href="https://discord.gg/EMWWCUR9VR" class="social-link w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 glass" title="Discord">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 11.721 11.721 0 0 0-.617-1.25.077.077 0 0 0-.079-.037 19.736 19.736 0 0 0-4.885 1.515.069.069 0 0 0-.032.027C.533 9.048-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.419-2.157 2.419zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.419-2.157 2.419z"/></svg>
+                    </a>
+                    <a href="https://www.instagram.com/knaim_15/" class="social-link w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 glass" title="Instagram">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    </a>
+                    <a href="https://www.tiktok.com/@knaimshow" class="social-link w-14 h-14 rounded-2xl flex items-center justify-center border border-white/10 glass" title="TikTok">
+                        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12.53.02C13.84 0 15.14.01 16.44 0c.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.59-5.71-.29-2.63 1.21-5.19 3.63-6.25.77-.35 1.59-.53 2.43-.54.02 1.33.02 2.66.02 4-.82.02-1.67.24-2.33.74-.86.61-1.37 1.67-1.3 2.7.12 1.07.96 2.01 2.02 2.22.84.15 1.77-.07 2.43-.65.59-.51.89-1.28.91-2.05-.03-4.58-.02-9.16-.03-13.74z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </section>
+        
+
+        <!-- Skills Section -->
+        <section id="skills" class="py-20 px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="flex flex-col items-center mb-24 text-center reveal">
+                    <span class="text-white/30 font-mono text-[10px] uppercase tracking-widest mb-2">// K+N</span>
+                    <h2 class="text-4xl md:text-5xl font-bold mb-4 tracking-tight uppercase">Technical Brilliancy </h2>
+                    <div class="w-20 h-1 bg-white/20 rounded-full"></div>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 reveal">
+                    <!-- Skills -->
+                    <div class="skill-card flex flex-col items-center glass-card p-8 rounded-[2rem] group" data-percentage="95">
+                        <div class="relative w-24 h-24 mb-6">
+                            <svg class="w-full h-full transform -rotate-90">
+                                <circle cx="48" cy="48" r="40" class="stroke-white/5 fill-transparent" stroke-width="4" />
+                                <circle cx="48" cy="48" r="40" class="circle-progress stroke-white/60 group-hover:stroke-white fill-transparent" stroke-width="4" stroke-linecap="round" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center text-sm font-mono font-bold">95%</div>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">TypingSkill</span>
+                    </div>
+
+                    <div class="skill-card flex flex-col items-center glass-card p-8 rounded-[2rem] group" data-percentage="98">
+                        <div class="relative w-24 h-24 mb-6">
+                            <svg class="w-full h-full transform -rotate-90">
+                                <circle cx="48" cy="48" r="40" class="stroke-white/5 fill-transparent" stroke-width="4" />
+                                <circle cx="48" cy="48" r="40" class="circle-progress stroke-white/60 group-hover:stroke-white fill-transparent" stroke-width="4" stroke-linecap="round" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center text-sm font-mono font-bold">98%</div>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">React</span>
+                    </div>
+
+                    <div class="skill-card flex flex-col items-center glass-card p-8 rounded-[2rem] group" data-percentage="92">
+                        <div class="relative w-24 h-24 mb-6">
+                            <svg class="w-full h-full transform -rotate-90">
+                                <circle cx="48" cy="48" r="40" class="stroke-white/5 fill-transparent" stroke-width="4" />
+                                <circle cx="48" cy="48" r="40" class="circle-progress stroke-white/60 group-hover:stroke-white fill-transparent" stroke-width="4" stroke-linecap="round" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center text-sm font-mono font-bold">92%</div>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">scribe</span>
+                    </div>
+
+                    <div class="skill-card flex flex-col items-center glass-card p-8 rounded-[2rem] group" data-percentage="88">
+                        <div class="relative w-24 h-24 mb-6">
+                            <svg class="w-full h-full transform -rotate-90">
+                                <circle cx="48" cy="48" r="40" class="stroke-white/5 fill-transparent" stroke-width="4" />
+                                <circle cx="48" cy="48" r="40" class="circle-progress stroke-white/60 group-hover:stroke-white fill-transparent" stroke-width="4" stroke-linecap="round" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center text-sm font-mono font-bold">88%</div>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">AI Modeling</span>
+                    </div>
+
+                    <div class="skill-card flex flex-col items-center glass-card p-8 rounded-[2rem] group" data-percentage="85">
+                        <div class="relative w-24 h-24 mb-6">
+                            <svg class="w-full h-full transform -rotate-90">
+                                <circle cx="48" cy="48" r="40" class="stroke-white/5 fill-transparent" stroke-width="4" />
+                                <circle cx="48" cy="48" r="40" class="circle-progress stroke-white/60 group-hover:stroke-white fill-transparent" stroke-width="4" stroke-linecap="round" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center text-sm font-mono font-bold">85%</div>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">tool-making</span>
+                    </div>
+
+                    <div class="skill-card flex flex-col items-center glass-card p-8 rounded-[2rem] group" data-percentage="94">
+                        <div class="relative w-24 h-24 mb-6">
+                            <svg class="w-full h-full transform -rotate-90">
+                                <circle cx="48" cy="48" r="40" class="stroke-white/5 fill-transparent" stroke-width="4" />
+                                <circle cx="48" cy="48" r="40" class="circle-progress stroke-white/60 group-hover:stroke-white fill-transparent" stroke-width="4" stroke-linecap="round" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center text-sm font-mono font-bold">94%</div>
+                        </div>
+                        <span class="text-[10px] font-bold uppercase tracking-widest text-white/40 group-hover:text-white transition-colors">pro Design</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="py-32 px-6">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex flex-col items-start mb-20 reveal">
+                    <span class="text-white/40 font-mono text-[10px] uppercase tracking-widest mb-2">// Timeline</span>
+                    <h2 class="text-4xl font-bold tracking-tight uppercase">Legacy</h2>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="glass-card p-8 md:p-12 rounded-[2.5rem] flex flex-col md:flex-row md:items-center justify-between gap-8 reveal">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-4 mb-2">
+                                <h3 class="text-2xl font-bold">WEB-DEVELOPER</h3>
+                                <span class="text-[10px] font-mono border border-white/10 px-3 py-1 rounded-full text-white/50">2021 - PRESENT</span>
+                            </div>
+                            <p class="text-white/70 font-medium mb-4 uppercase tracking-wider text-sm">Senior web Developer</p>
+                            <p class="text-white/40 text-sm leading-relaxed max-w-2xl">"Crafting timeless web solutions with expertise in legacy systems.
+Bridging classic technologies with modern efficiency and precision."</p>
+                        </div>
+                        <div class="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center glass group-hover:border-white/30 transition-all cursor-pointer">
+                            <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-8 md:p-12 rounded-[2.5rem] flex flex-col md:flex-row md:items-center justify-between gap-8 reveal">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-4 mb-2">
+                                <h3 class="text-2xl font-bold">SOCIAL CREATOR</h3>
+                                <span class="text-[10px] font-mono border border-white/10 px-3 py-1 rounded-full text-white/50">2021 - 2023</span>
+                            </div>
+                            <p class="text-white/70 font-medium mb-4 uppercase tracking-wider text-sm">pro and advence creator</p>
+                            <p class="text-white/40 text-sm leading-relaxed max-w-2xl">"Turning ideas into engaging digital experiences that connect and inspire.
+Creating content that sparks conversations and builds communities."</p>
+                        </div>
+                        <div class="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center glass group-hover:border-white/30 transition-all cursor-pointer">
+                            <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+                <!-- Experience Section -->
+        <section id="experience" class="py-32 px-6">
+            <div class="max-w-5xl mx-auto">
+                <div class="flex flex-col items-start mb-20 reveal">
+                    <span class="text-white/40 font-mono text-[10px] uppercase tracking-widest mb-2">// Timeline</span>
+                    <h2 class="text-4xl font-bold tracking-tight uppercase">ONLINE</h2>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="glass-card p-8 md:p-12 rounded-[2.5rem] flex flex-col md:flex-row md:items-center justify-between gap-8 reveal">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-4 mb-2">
+                                <h3 class="text-2xl font-bold">CONTENT CREATOR</h3>
+                                <span class="text-[10px] font-mono border border-white/10 px-3 py-1 rounded-full text-white/50">2021 - PRESENT</span>
+                            </div>
+                            <p class="text-white/70 font-medium mb-4 uppercase tracking-wider text-sm">ADVENCE CREATOR</p>
+                            <p class="text-white/40 text-sm leading-relaxed max-w-2xl">"Crafting compelling stories that capture attention and drive engagement.
+Transforming ideas into content that resonates and inspires action."</p>
+                        </div>
+                        <div class="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center glass group-hover:border-white/30 transition-all cursor-pointer">
+                            <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-8 md:p-12 rounded-[2.5rem] flex flex-col md:flex-row md:items-center justify-between gap-8 reveal">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-4 mb-2">
+                                <h3 class="text-2xl font-bold">C.E.O</h3>
+                                <span class="text-[10px] font-mono border border-white/10 px-3 py-1 rounded-full text-white/50">2021 - 2023</span>
+                            </div>
+                            <p class="text-white/70 font-medium mb-4 uppercase tracking-wider text-sm">Pen-for-developers</p>
+                            <p class="text-white/40 text-sm leading-relaxed max-w-2xl">"Leading with vision, strategy, and a passion for innovation.
+Driving growth and empowering teams to achieve extraordinary results."</p>
+                        </div>
+                        <div class="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center glass group-hover:border-white/30 transition-all cursor-pointer">
+                            <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Showcase -->
+        <section id="projects" class="py-32 px-6">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row md:items-end justify-between mb-20 reveal">
+                    <div>
+                        <span class="text-white/40 font-mono text-[10px] uppercase tracking-widest mb-2">// Portfolio</span>
+                        <h2 class="text-4xl md:text-5xl font-bold tracking-tight uppercase">Recent Experiments</h2>
+                    </div>
+                    <p class="text-white/40 max-w-xs mt-6 md:mt-0 text-sm italic">
+                        "The best way to predict the future is to invent it."
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+                    <div class="group relative overflow-hidden rounded-[3rem] glass-card reveal">
+                        <div class="aspect-video w-full overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=800" alt="Neural Dashboard" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 grayscale hover:grayscale-0">
+                        </div>
+                        <div class="p-10 relative">
+                            <div class="flex justify-between items-start mb-6">
+                                <div>
+                                    <span class="text-[10px] font-mono text-white/30 uppercase tracking-widest">HACKING INTERFACE</span>
+                                    <h3 class="text-3xl font-bold group-hover:text-white transition-colors">PFD-TOOL</h3>
+                                </div>
+                                <div class="p-4 rounded-full border border-white/10 group-hover:bg-white group-hover:text-black transition-all">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="text-[10px] px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-white/50 uppercase">PFD-MASTER</span>
+                                <span class="text-[10px] px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-white/50 uppercase">PFD-iNFO</span>
+                                <span class="text-[10px] px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-white/50 uppercase">WEB VERSION</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="group relative overflow-hidden rounded-[3rem] glass-card reveal">
+                        <div class="aspect-video w-full overflow-hidden">
+                            <img src="https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=800" alt="Vortex Protocol" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 grayscale hover:grayscale-0">
+                        </div>
+                        <div class="p-10 relative">
+                            <div class="flex justify-between items-start mb-6">
+                                <div>
+                                    <span class="text-[10px] font-mono text-white/30 uppercase tracking-widest">social content</span>
+                                    <h3 class="text-3xl font-bold group-hover:text-white transition-colors">K NAiM show</h3>
+                                </div>
+                                <div class="p-4 rounded-full border border-white/10 group-hover:bg-white group-hover:text-black transition-all">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+                                </div>
+                            </div>
+                            <div class="flex flex-wrap gap-3">
+                                <span class="text-[10px] px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-white/50 uppercase">youtube</span>
+                                <span class="text-[10px] px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-white/50 uppercase">facebook</span>
+                                <span class="text-[10px] px-4 py-1.5 rounded-full bg-white/5 border border-white/5 text-white/50 uppercase">tiktok</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Cinematic Section -->
+        <section class="relative py-64 overflow-hidden bg-black flex items-center justify-center">
+            <div class="absolute inset-0 opacity-20">
+                <div class="absolute inset-0 bg-gradient-to-b from-black via-transparent to-black z-10"></div>
+                <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?auto=format&fit=crop&q=80&w=1920" alt="Future" class="w-full h-full object-cover grayscale">
+            </div>
+            <div class="relative z-20 text-center px-6 reveal">
+                <h2 class="text-6xl md:text-9xl font-black italic tracking-tighter uppercase mb-6 leading-none glow-text">
+                    Building <br>
+                    <span class="border-text">The Future</span> <br>
+                    With PEN FOR DEVELOPERS
+                </h2>
+                <p class="text-white/40 font-mono tracking-[0.5em] uppercase text-xs md:text-sm">
+                    CREATION • HARDWORK • SUPPORT
+                </p>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-32 px-6">
+            <div class="max-w-6xl mx-auto">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-24">
+                    <div class="reveal">
+                        <h2 class="text-5xl md:text-6xl font-bold mb-10 tracking-tight uppercase">connect us.</h2>
+                        <p class="text-white/40 mb-12 leading-relaxed text-lg max-w-md">
+                            "Always stay with us to enhance your skills; we will honor and uphold your trust."
+                        </p>
+                        <div class="space-y-10">
+                            <div class="flex items-center gap-6 group cursor-pointer">
+                                <div class="w-14 h-14 rounded-2xl border border-white/10 flex items-center justify-center glass group-hover:bg-white group-hover:text-black transition-all duration-500">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] text-white/30 uppercase tracking-widest font-mono mb-1">24hr.</div>
+                                    <div class="text-lg font-bold">penfordevelopers@gmail.com</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-6 group cursor-pointer">
+                                <div class="w-14 h-14 rounded-2xl border border-white/10 flex items-center justify-center glass group-hover:bg-white group-hover:text-black transition-all duration-500">
+                                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                                </div>
+                                <div>
+                                    <div class="text-[10px] text-white/30 uppercase tracking-widest font-mono mb-1">Coordinates</div>
+                                    <div class="text-lg font-bold">BANGLADESH / Global</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="glass-card p-8 md:p-12 rounded-[3rem] reveal">
+                        <form class="space-y-8" onsubmit="event.preventDefault(); alert('Transmission Received. Intercepting soon...');">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div class="relative">
+                                    <label class="block text-[10px] font-mono text-white/30 uppercase tracking-widest mb-3 ml-1">Identity</label>
+                                    <input type="text" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-white focus:outline-none focus:border-white/40 focus:bg-white/[0.08] transition-all" placeholder="ENTER NAME">
+                                </div>
+                                <div class="relative">
+                                    <label class="block text-[10px] font-mono text-white/30 uppercase tracking-widest mb-3 ml-1">Secure Email</label>
+                                    <input type="email" class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-white focus:outline-none focus:border-white/40 focus:bg-white/[0.08] transition-all" placeholder="ENTER EMAIL">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-mono text-white/30 uppercase tracking-widest mb-3 ml-1">The Message</label>
+                                <textarea class="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-5 text-white h-40 resize-none focus:outline-none focus:border-white/40 focus:bg-white/[0.08] transition-all" placeholder="Enter your data..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full py-6 bg-white text-black rounded-2xl font-black uppercase tracking-[0.2em] text-xs hover:bg-white/90 transition-all hover:scale-[1.02] shadow-2xl">
+                                Send Transmission
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-16 border-t border-white/5 text-center px-6 relative z-10">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-10">
+            <div class="text-xs text-white/20 font-mono tracking-widest uppercase">
+                © 2024 Naim. Developed in YOUR HEART.
+            </div>
+            <div class="flex gap-10 text-[10px] font-mono uppercase tracking-[0.3em] text-white/30">
+                <a href="#" class="hover:text-white transition-all">GitHub</a>
+                <a href="#" class="hover:text-white transition-all">LinkedIn</a>
+                <a href="#" class="hover:text-white transition-all">X / Twitter</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- Background Particle System ---
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const particleCount = 70;
+
+        class Particle {
+            constructor() {
+                this.init();
+            }
+            init() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.4;
+                this.speedY = (Math.random() - 0.5) * 0.4;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+            draw() {
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            for (let i = 0; i < particleCount; i++) particles.push(new Particle());
+        }
+
+        function animateBg() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Grid
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.015)';
+            ctx.lineWidth = 0.5;
+            const gridSize = 100;
+            for(let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for(let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            // Connections
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 150) {
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * (1 - dist / 150)})`;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+            requestAnimationFrame(animateBg);
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+        animateBg();
+
+        // --- Typing Animation ---
+        const typingElement = document.getElementById('typing-text');
+        const roles = ['Web Developer', 'Tool Creator', 'CREATOR', 'MASTER'];
+        let roleIdx = 0;
+        let charIdx = 0;
+        let isDeleting = false;
+
+        function type() {
+            const currentRole = roles[roleIdx];
+            if (isDeleting) {
+                typingElement.textContent = currentRole.substring(0, charIdx - 1);
+                charIdx--;
+            } else {
+                typingElement.textContent = currentRole.substring(0, charIdx + 1);
+                charIdx++;
+            }
+
+            if (!isDeleting && charIdx === currentRole.length) {
+                isDeleting = true;
+                setTimeout(type, 2000);
+            } else if (isDeleting && charIdx === 0) {
+                isDeleting = false;
+                roleIdx = (roleIdx + 1) % roles.length;
+                setTimeout(type, 500);
+            } else {
+                setTimeout(type, isDeleting ? 50 : 150);
+            }
+        }
+        type();
+
+        // --- Intersection Observer for Animations ---
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    // If it's a skill card, animate the progress circle
+                    if (entry.target.classList.contains('skill-card')) {
+                        const circle = entry.target.querySelector('.circle-progress');
+                        const percentage = entry.target.getAttribute('data-percentage');
+                        const offset = 251.2 - (percentage / 100) * 251.2;
+                        circle.style.strokeDashoffset = offset;
+                    }
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal, .skill-card').forEach(el => observer.observe(el));
+
+        // --- Navbar Scroll Effect ---
+        const nav = document.querySelector('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+                nav.style.borderRadius = '0px';
+                nav.style.maxWidth = '100%';
+            } else {
+                nav.classList.remove('scrolled');
+                nav.style.borderRadius = '9999px';
+                nav.style.maxWidth = '80rem'; // max-w-7xl
+            }
+        });
+    </script>
+</body>
+</html>
