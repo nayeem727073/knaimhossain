@@ -74,7 +74,7 @@
         }
 
         /* Animations */
-        .glow-text { text-shadow: 0 0 15px rgba(255, 255, 255, 0.3); }
+        .glow-text { text-shadow: 0 0 15px rgba(255, 255, 255, 0.699); }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
@@ -133,6 +133,512 @@
             transform: scale(1.1);
         }
     </style>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --text-muted: #707070;
+            --accent: #4a9eff;
+            --border: #333333;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+        }
+
+        body {
+            font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Fira Code', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: var(--bg-secondary);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            background: rgba(26, 26, 26, 0.9);
+        }
+
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 0.05em;
+            color: var(--text-primary);
+        }
+
+        .header .subtitle {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Main Container */
+        .container {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Search Bar */
+        .search-container {
+            margin-bottom: 2rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.875rem 1.25rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+        }
+
+        /* Tool Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .tool-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), #00d4ff);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border-color: var(--accent);
+        }
+
+        .tool-card:hover::before {
+            transform: translateX(0);
+        }
+
+        .tool-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-tertiary);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .tool-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: var(--text-primary);
+        }
+
+        .tool-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .btn:hover {
+            background: #3a8eef;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 158, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: #3a3a3a;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+        }
+
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+
+        /* Terminal */
+        .terminal {
+            background: var(--bg-primary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            font-family: 'SF Mono', monospace;
+            font-size: 0.875rem;
+            overflow-y: auto;
+            max-height: 400px;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .terminal-input {
+            display: flex;
+            align-items: center;
+            margin-top: 1rem;
+        }
+
+        .terminal-prompt {
+            color: var(--accent);
+            margin-right: 0.5rem;
+        }
+
+        .terminal-input input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: inherit;
+            outline: none;
+        }
+
+        /* Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+
+        .info-label {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-value {
+            color: var(--text-primary);
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 2000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-color: var(--success);
+        }
+
+        .notification.error {
+            border-color: var(--danger);
+        }
+
+        .notification.warning {
+            border-color: var(--warning);
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                width: 95%;
+                max-height: 95vh;
+            }
+        }
+    </style>
+    <style>
+/* wrapper spacing (≈ 3 inch gap) */
+.aura-panel-wrapper {
+  padding: 120px 0;
+  display: flex;
+  justify-content: center;
+}
+
+/* main glass panel */
+.aura-panel {
+  position: relative;
+  width: 80%;
+  max-width: 900px;
+  padding: 60px 40px;
+  border-radius: 18px;
+
+  background: rgba(10, 20, 40, 0.45);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+
+  border: 1px solid rgba(0, 180, 255, 0.25);
+  box-shadow:
+    0 0 40px rgba(0, 160, 255, 0.15),
+    inset 0 0 30px rgba(0, 160, 255, 0.08);
+
+  animation: auraGlow 6s ease-in-out infinite;
+  text-align: center;
+  overflow: hidden;
+}
+
+/* glowing animation */
+@keyframes auraGlow {
+  0%, 100% {
+    box-shadow:
+      0 0 35px rgba(0, 160, 255, 0.15),
+      inset 0 0 25px rgba(0, 160, 255, 0.08);
+  }
+  50% {
+    box-shadow:
+      0 0 55px rgba(0, 200, 255, 0.3),
+      inset 0 0 35px rgba(0, 200, 255, 0.15);
+  }
+}
+
+/* main text */
+.aura-code {
+  font-family: 'Courier New', monospace;
+  font-size: 1.4rem;
+  color: #4fdcff;
+  letter-spacing: 1px;
+}
+
+/* sub text */
+.aura-subtext {
+  margin-top: 12px;
+  font-size: 0.75rem;
+  letter-spacing: 3px;
+  color: rgba(180, 220, 255, 0.4);
+}
+
+/* subtle floating particles */
+.aura-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(circle, rgba(80,200,255,0.25) 1px, transparent 1px);
+  background-size: 40px 40px;
+  opacity: 0.2;
+  animation: drift 20s linear infinite;
+}
+
+@keyframes drift {
+  from { transform: translateY(0); }
+  to { transform: translateY(-40px); }
+}
+</style>
+
+    </style>
+    <script>
+const orbox = document.querySelector(".energy-orbs");
+for (let i = 0; i < 45; i++) {
+  const orb = document.createElement("span");
+  orb.style.left = Math.random() * 100 + "%";
+  orb.style.animationDuration = 4 + Math.random() * 6 + "s";
+  orb.style.animationDelay = Math.random() * 5 + "s";
+  orbBox.appendChild(orb);
+}
+</script>
+
 </head>
 <body>
     <canvas id="bg-canvas"></canvas>
@@ -157,21 +663,150 @@
 
     <main class="relative z-10">
         <!-- Hero Section -->
-        <section id="about" class="h-screen flex flex-col items-center justify-center px-6 text-center">
-            <div class="reveal">
+        <section id="about" class="min-h-screen flex items-center justify-start px-16 md:px-24">
+
+
+            <div class="reveal text-left max-w-xl">
+
                 <div class="inline-block px-3 py-1 mb-6 border border-white/20 rounded-full text-[10px] uppercase tracking-[0.3em] text-white/60 glass">
                     Available for TOMAR BIRIYANI STYle collaborations
                 </div>
-                <h1 class="text-6xl md:text-9xl font-bold tracking-tighter mb-4 glow-text uppercase">
-                    Hi, I’m <br> MD.NAiM HOSSAiN
+               <h1 class="text-5xl md:text-6xl font-bold tracking-tight glow-text uppercase leading-tight">
+  Hi, I’m <br>
+  <span class="text-white">MD. Naim Hossain</span>
+</h1>
+<section>
+
+<style>
+  :root {
+    --cyan: hsl(180, 100%, 68%);
+    --bg: #00000054;
+  }
+
+  .cyber-zone {
+    position:relative;
+    right: 6%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 2500px;
+    height: 60px;
+    pointer-events: none;
+    z-index: 9;
+  }
+
+  /* ===== MATRIX RAIN ===== */
+  .matrix span {
+    position: absolute;
+    color: var(--cyan);
+    font-size: 25px;
+    opacity: .3;
+    animation: fall linear infinite;
+  }
+
+  @keyframes fall {
+    to { transform: translateY(380px); opacity: 0; }
+  }
+
+  /* ===== FLOATING CODE ===== */
+  .code {
+    position: absolute;
+    color: var(--cyan);
+    font-size: 20px;
+    opacity: .6;
+    animation: float 6s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0% { transform: translateY(20px); opacity: 0; }
+    50% { opacity: .7; }
+    100% { transform: translateY(-40px); opacity: 0; }
+  }
+
+  /* ===== 3D CUBE ===== */
+  .cube {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 90px;
+    height: 390px;
+    transform-style: preserve-3d;
+    animation: spin 20s linear infinite;
+  }
+
+  .cube div {
+    position: absolute;
+    width: 390px;
+    height: 390px;
+    border: 1px solid var(--cyan);
+    background: rgba(0,246,255,.05);
+  }
+
+  .cube .f  { transform: translateZ(45px); }
+  .cube .b  { transform: rotateY(180deg) translateZ(45px); }
+  .cube .l  { transform: rotateY(-90deg) translateZ(45px); }
+  .cube .r  { transform: rotateY(90deg) translateZ(45px); }
+  .cube .t  { transform: rotateX(90deg) translateZ(45px); }
+  .cube .bo { transform: rotateX(-90deg) translateZ(45px); }
+
+  @keyframes spin {
+    to { transform: rotateX(360deg) rotateY(360deg); }
+  }
+</style>
+
+<div class="cyber-zone">
+  <div class="glow" id="glow"></div>
+  <div class="orb" id="orb"></div>
+
+  <div class="cube">
+    <div class="f"></div><div class="b"></div>
+    <div class="l"></div><div class="r"></div>
+    <div class="t"></div><div class="bo"></div>
+  </div>
+
+  <div class="matrix" id="matrix"></div>
+</div>
+
+<script>
+  const orb = document.getElementById("orb");
+  const glow = document.getElementById("glow");
+  const zone = document.querySelector(".cyber-zone");
+
+  /* Matrix rain */
+  const matrix = document.getElementById("matrix");
+  const chars = "01AI<>/{}".split("");
+
+  for (let i = 0; i < 18; i++) {
+    const s = document.createElement("span");
+    s.textContent = chars[Math.floor(Math.random()*chars.length)];
+    s.style.left = Math.random()*100+"%";
+    s.style.animationDuration = 3+Math.random()*4+"s";
+    matrix.appendChild(s);
+  }
+
+  /* Floating code */
+  const codes = ["{ }", "</>", "const", "AI()", "function"];
+  for (let i=0;i<10;i++){
+    const c = document.createElement("div");
+    c.className="code";
+    c.textContent=codes[Math.floor(Math.random()*codes.length)];
+    c.style.left=Math.random()*100+"%";
+    c.style.top=Math.random()*100+"%";
+    c.style.animationDelay=Math.random()*5+"s";
+    zone.appendChild(c);
+  }
+</script>
+
+</section>
                 </h1>
                 <div class="h-8 md:h-12 text-xl md:text-3xl font-mono text-white/40 mb-12">
                     <span id="typing-text"></span><span class="cursor"></span>
                 </div>
-                <p class="max-w-xl mx-auto text-white/60 leading-relaxed mb-10 text-sm md:text-base">
+                <p class="max-w-xl text-white/60 leading-relaxed mb-10">
+
                     "I am a tech geek master. You can share all your problems with me, and I will easily solve them for you."
                 </p>
-                <div class="flex flex-wrap gap-4 justify-center">
+                <div class="flex flex-wrap gap-4 justify-start">
+
                     <a href="#projects" class="px-10 py-4 bg-white text-black font-bold rounded-full hover:bg-white/90 transition-all hover:scale-105 text-sm uppercase tracking-widest">
                         View Projects
                     </a>
@@ -184,6 +819,244 @@
                 <div class="w-[1px] h-16 bg-gradient-to-b from-white to-transparent opacity-30"></div>
             </div>
         </section>
+        </section>
+</section>
+
+<section>
+    <!-- ULTRA SOLAR DEV SECTION START -->
+<div class="ultra-solar">
+
+  <div class="energy-grid"></div>
+  <div class="energy-orbs"></div>
+
+  <div class="solar-core">
+
+    <!-- Quran Ayat Scroll -->
+    <div class="ayat-scroll">
+      <div class="ayat-track">
+        <p>
+          “Indeed, in the remembrance of Allah do hearts find rest.”
+          <span>— Qur’an 13:28</span>
+        </p>
+        <p>
+          “Allah is the Light of the heavens and the earth.”
+          <span>— Qur’an 24:35</span>
+        </p>
+        <p>
+          “And He found you lost and guided you.”
+          <span>— Qur’an 93:7</span>
+        </p>
+        <p>
+          “So verily, with hardship comes ease.”
+          <span>— Qur’an 94:6</span>
+        </p>
+      </div>
+    </div>
+
+    <h2>STAY WiTH PEN FOR DEVELOPERS</h2>
+    <p>
+      YOUR TRUSTED COMPANY "PFD"
+    </p>
+
+  </div>
+</div>
+
+<style>
+/* MAIN GAP */
+.ultra-solar{
+  height: 7in;
+  padding-top: 1in; /* ⬅️ reduced from 2in */
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* ENERGY GRID */
+.energy-grid{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px),
+    linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px);
+  background-size:70px 70px;
+  animation:gridFlow 18s linear infinite;
+  opacity:0.35;
+}
+
+/* MAIN PANEL (WIDTH INCREASED) */
+.solar-core{
+  position:relative;
+  z-index:2;
+  padding:55px 90px;
+  width: 720px;          /* ⬅️ wider panel */
+  max-width: 90%;
+  border-radius:26px;
+  text-align:center;
+  color:#fff;
+  background:rgba(255,255,255,0.12);
+  backdrop-filter:blur(18px);
+  border:1px solid rgba(255,255,255,0.35);
+  box-shadow:
+    0 0 60px rgba(255,255,255,0.25),
+    inset 0 0 35px rgba(255,255,255,0.12);
+  animation:solarFloat 5s ease-in-out infinite;
+}
+
+/* AYAT SCROLL AREA */
+.ayat-scroll{
+  height:110px;
+  overflow:hidden;
+  margin-bottom:26px;
+  position:relative;
+  mask-image: linear-gradient(
+    to bottom,
+    transparent,
+    black 20%,
+    black 80%,
+    transparent
+  );
+}
+
+/* AYAT TRACK */
+.ayat-track{
+  animation:ayatMove 22s linear infinite;
+}
+
+.ayat-track p{
+  margin:0 0 22px;
+  font-size:17px;       /* ⬅️ bigger ayat text */
+  line-height:1.8;
+  opacity:0.95;
+  animation:ayatFade 22s linear infinite;
+}
+
+.ayat-track span{
+  display:block;
+  font-size:13px;
+  opacity:0.6;
+  margin-top:6px;
+}
+
+/* TEXT */
+.solar-core h2{
+  margin:0 0 14px;
+  font-weight:600;
+  letter-spacing:1px;
+}
+
+.solar-core p{
+  margin:0;
+  font-size:15px;
+  opacity:0.85;
+  line-height:1.7;
+}
+
+/* ENERGY SCAN LINE */
+.ultra-solar::after{
+  content:"";
+  position:absolute;
+  width:200%;
+  height:2px;
+  top:74%;
+  background:linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.8),
+    transparent
+  );
+  animation:scanMove 7s linear infinite;
+}
+
+/* ORBS */
+.energy-orbs span{
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:rgba(255,255,255,0.7);
+  border-radius:50%;
+  animation:orbFloat linear infinite;
+}
+
+/* ANIMATIONS */
+@keyframes solarFloat{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-14px);}
+}
+
+@keyframes gridFlow{
+  from{background-position:0 0;}
+  to{background-position:140px 140px;}
+}
+
+@keyframes scanMove{
+  from{transform:translateX(-50%);}
+  to{transform:translateX(50%);}
+}
+
+@keyframes orbFloat{
+  from{
+    transform:translateY(140px);
+    opacity:0;
+  }
+  to{
+    transform:translateY(-300px);
+    opacity:1;
+  }
+}
+
+/* AYAT MOVE + FADE */
+@keyframes ayatMove{
+  from{transform:translateY(0);}
+  to{transform:translateY(-100%);}
+}
+</style>
+
+<script>
+/* ENERGY ORBS */
+const Box = document.querySelector(".energy-orbs");
+for(let i=0;i<45;i++){
+  const orb=document.createElement("span");
+  orb.style.left=Math.random()*100+"%";
+  orb.style.animationDuration=4+Math.random()*6+"s";
+  orb.style.animationDelay=Math.random()*5+"s";
+  orbBox.appendChild(orb);
+}
+</script>
+
+
+</section>
+</section>
+
+<script>
+/* ENERGY ORB GENERATOR */
+const box = document.querySelector(".energy-orbs");
+for(let i=0;i<45;i++){
+  const orb=document.createElement("span");
+  orb.style.left=Math.random()*100+"%";
+  orb.style.animationDuration=4+Math.random()*6+"s";
+  orb.style.animationDelay=Math.random()*5+"s";
+  orbBox.appendChild(orb);
+}
+</script>
+<!-- ULTRA SOLAR DEV SECTION END -->
+
+
+<script>
+/* ENERGY ORB GENERATOR */
+const orbBox = document.querySelector(".energy-orbs");
+for(let i=0;i<45;i++){
+  const orb=document.createElement("span");
+  orb.style.left=Math.random()*100+"%";
+  orb.style.animationDuration=4+Math.random()*6+"s";
+  orb.style.animationDelay=Math.random()*5+"s";
+  orbBox.appendChild(orb);
+}
+</script>
+<!-- ULTRA SOLAR DEV SECTION END -->
+
+<section>
 
         <!-- Social Media Section -->
         <section id="socials" class="py-12 px-6">
@@ -323,23 +1196,12 @@ Bridging classic technologies with modern efficiency and precision."</p>
                             <p class="text-white/40 text-sm leading-relaxed max-w-2xl">"Turning ideas into engaging digital experiences that connect and inspire.
 Creating content that sparks conversations and builds communities."</p>
                         </div>
+                        
                         <div class="w-16 h-16 rounded-full border border-white/10 flex items-center justify-center glass group-hover:border-white/30 transition-all cursor-pointer">
                             <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </div>
                     </div>
-                </div>
-            </div>
-        </section>
-
-                <!-- Experience Section -->
-        <section id="experience" class="py-32 px-6">
-            <div class="max-w-5xl mx-auto">
-                <div class="flex flex-col items-start mb-20 reveal">
-                    <span class="text-white/40 font-mono text-[10px] uppercase tracking-widest mb-2">// Timeline</span>
-                    <h2 class="text-4xl font-bold tracking-tight uppercase">ONLINE</h2>
-                </div>
-
-                <div class="space-y-6">
+                    <div class="space-y-6">
                     <div class="glass-card p-8 md:p-12 rounded-[2.5rem] flex flex-col md:flex-row md:items-center justify-between gap-8 reveal">
                         <div class="flex-1">
                             <div class="flex items-center gap-4 mb-2">
@@ -354,8 +1216,7 @@ Transforming ideas into content that resonates and inspires action."</p>
                             <svg class="w-6 h-6 text-white/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
                         </div>
                     </div>
-
-                    <div class="glass-card p-8 md:p-12 rounded-[2.5rem] flex flex-col md:flex-row md:items-center justify-between gap-8 reveal">
+                     <div class="glass-card p-8 md:p-12 rounded-[2.5rem] flex flex-col md:flex-row md:items-center justify-between gap-8 reveal">
                         <div class="flex-1">
                             <div class="flex items-center gap-4 mb-2">
                                 <h3 class="text-2xl font-bold">C.E.O</h3>
@@ -372,7 +1233,20 @@ Driving growth and empowering teams to achieve extraordinary results."</p>
                 </div>
             </div>
         </section>
+       <section>
 
+<section>
+    <div class="aura-panel-wrapper">
+        
+  <div class="aura-panel">
+    
+    <span class="aura-code"># PFD TOOLS ({ It features a clean, user-friendly UI where all options are neatly organized for easy access.<br>
+The tool is primarily designed for productivity, PC monitoring, and quick automation tasks.' });</span>
+    <div class="aura-subtext">PEN FOR DEVELOPERS</div>
+  </div>
+</div>
+
+</section>
         <!-- Projects Showcase -->
         <section id="projects" class="py-32 px-6">
             <div class="max-w-7xl mx-auto">
@@ -452,7 +1326,1121 @@ Driving growth and empowering teams to achieve extraordinary results."</p>
                 </p>
             </div>
         </section>
+<section>
+    <header class="header">
+        <h1>DevTools Suite</h1>
+        <div class="subtitle">Essential developer utilities in one place</div>
+    </header>
 
+    <main class="container">
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="Search tools...">
+        </div>
+
+        <div class="tools-grid" id="toolsGrid">
+            <!-- Tools will be dynamically loaded here -->
+        </div>
+    </main>
+
+    <!-- Modal -->
+    <div class="modal" id="toolModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Tool</h2>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Tool content will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationText">Notification</span>
+    </div>
+
+    <script>
+        // Tools Configuration
+        const tools = [
+            {
+                id: 'password',
+                title: 'Password Generator',
+                description: 'Generate secure passwords with customizable options',
+                icon: '🔐',
+                category: 'security'
+            },
+            {
+                id: 'hash',
+                title: 'Hash Generator',
+                description: 'Generate MD5, SHA1, SHA256 hashes',
+                icon: '🔑',
+                category: 'security'
+            },
+            {
+                id: 'url',
+                title: 'URL Encoder/Decoder',
+                description: 'Encode and decode URLs safely',
+                icon: '🔗',
+                category: 'encoding'
+            },
+            {
+                id: 'base64',
+                title: 'Base64 Encoder/Decoder',
+                description: 'Encode and decode Base64 strings',
+                icon: '📝',
+                category: 'encoding'
+            },
+            {
+                id: 'qr',
+                title: 'QR Code Generator',
+                description: 'Generate QR codes from text',
+                icon: '📱',
+                category: 'utilities'
+            },
+            {
+                id: 'color',
+                title: 'Color Picker',
+                description: 'Pick and convert colors between formats',
+                icon: '🎨',
+                category: 'design'
+            },
+            {
+                id: 'converter',
+                title: 'Text Converter',
+                description: 'Convert text between various formats',
+                icon: '🔄',
+                category: 'text'
+            },
+            {
+                id: 'random',
+                title: 'Random Generator',
+                description: 'Generate random values and data',
+                icon: '🎲',
+                category: 'utilities'
+            },
+            {
+                id: 'terminal',
+                title: 'Terminal',
+                description: 'Simulated terminal with basic commands',
+                icon: '💻',
+                category: 'development'
+            },
+            {
+                id: 'notes',
+                title: 'Notes',
+                description: 'Quick notes with auto-save',
+                icon: '📋',
+                category: 'productivity'
+            },
+            {
+                id: 'session',
+                title: 'Session Tracker',
+                description: 'Track your browsing session',
+                icon: '⏱️',
+                category: 'analytics'
+            },
+            {
+                id: 'activity',
+                title: 'Activity Logger',
+                description: 'Log and track your activities',
+                icon: '📊',
+                category: 'analytics'
+            },
+            {
+                id: 'traces',
+                title: 'Clear Traces',
+                description: 'Clear browser data and traces',
+                icon: '🧹',
+                category: 'privacy'
+            },
+            {
+                id: 'offline',
+                title: 'Offline Indicator',
+                description: 'Monitor connection status',
+                icon: '📡',
+                category: 'network'
+            },
+            {
+                id: 'destruct',
+                title: 'Self Destruct',
+                description: 'Reset everything with confirmation',
+                icon: '💥',
+                category: 'system'
+            }
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderTools();
+            setupSearch();
+            setupModalClose();
+        });
+
+        // Render Tools Grid
+        function renderTools() {
+            const grid = document.getElementById('toolsGrid');
+            grid.innerHTML = tools.map(tool => `
+                <div class="tool-card" onclick="openTool('${tool.id}')">
+                    <div class="tool-icon">${tool.icon}</div>
+                    <h3 class="tool-title">${tool.title}</h3>
+                    <p class="tool-description">${tool.description}</p>
+                </div>
+            `).join('');
+        }
+
+        // Search Functionality
+        function setupSearch() {
+            const searchInput = document.getElementById('searchInput');
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const cards = document.querySelectorAll('.tool-card');
+                
+                cards.forEach((card, index) => {
+                    const tool = tools[index];
+                    const matches = tool.title.toLowerCase().includes(searchTerm) || 
+                                   tool.description.toLowerCase().includes(searchTerm);
+                    card.style.display = matches ? 'block' : 'none';
+                });
+            });
+        }
+
+        // Modal Functions
+        function openTool(toolId) {
+            const modal = document.getElementById('toolModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            const tool = tools.find(t => t.id === toolId);
+            modalTitle.textContent = tool.title;
+            
+            // Load tool content
+            switch(toolId) {
+                case 'password':
+                    loadPasswordGenerator(modalBody);
+                    break;
+                case 'hash':
+                    loadHashGenerator(modalBody);
+                    break;
+                case 'url':
+                    loadUrlEncoder(modalBody);
+                    break;
+                case 'base64':
+                    loadBase64Encoder(modalBody);
+                    break;
+                case 'qr':
+                    loadQRGenerator(modalBody);
+                    break;
+                case 'color':
+                    loadColorPicker(modalBody);
+                    break;
+                case 'converter':
+                    loadTextConverter(modalBody);
+                    break;
+                case 'random':
+                    loadRandomGenerator(modalBody);
+                    break;
+                case 'terminal':
+                    loadTerminal(modalBody);
+                    break;
+                case 'notes':
+                    loadNotes(modalBody);
+                    break;
+                case 'session':
+                    loadSessionTracker(modalBody);
+                    break;
+                case 'activity':
+                    loadActivityLogger(modalBody);
+                    break;
+                case 'traces':
+                    loadClearTraces(modalBody);
+                    break;
+                case 'offline':
+                    loadOfflineIndicator(modalBody);
+                    break;
+                case 'destruct':
+                    loadSelfDestruct(modalBody);
+                    break;
+            }
+            
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('toolModal').classList.remove('active');
+        }
+
+        function setupModalClose() {
+            document.getElementById('toolModal').addEventListener('click', (e) => {
+                if (e.target.id === 'toolModal') {
+                    closeModal();
+                }
+            });
+        }
+
+        // Tool Loaders
+        function loadPasswordGenerator(container) {
+            container.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Password Length</label>
+                    <input type="range" class="form-control" id="passwordLength" min="8" max="32" value="16">
+                    <div style="text-align: center; margin-top: 0.5rem; color: var(--accent);" id="lengthDisplay">16</div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Options</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;">
+                        <label><input type="checkbox" id="uppercase" checked> Uppercase</label>
+                        <label><input type="checkbox" id="lowercase" checked> Lowercase</label>
+                        <label><input type="checkbox" id="numbers" checked> Numbers</label>
+                        <label><input type="checkbox" id="symbols" checked> Symbols</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Generated Password</label>
+                    <input type="text" class="form-control" id="passwordOutput" readonly>
+                </div>
+                <button class="btn" onclick="generatePassword()">Generate</button>
+                <button class="btn btn-secondary" onclick="copyPassword()">Copy</button>
+            `;
+            
+            document.getElementById('passwordLength').addEventListener('input', (e) => {
+                document.getElementById('lengthDisplay').textContent = e.target.value;
+            });
+        }
+
+        function loadHashGenerator(container) {
+            container.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Input Text</label>
+                    <textarea class="form-control" id="hashInput" rows="4" placeholder="Enter text to hash..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Hash Type</label>
+                    <select class="form-control" id="hashType">
+                        <option value="md5">MD5</option>
+                        <option value="sha1">SHA1</option>
+                        <option value="sha256">SHA256</option>
+                        <option value="sha512">SHA512</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Hash Output</label>
+                    <input type="text" class="form-control" id="hashOutput" readonly>
+                </div>
+                <button class="btn" onclick="generateHash()">Generate Hash</button>
+                <button class="btn btn-secondary" onclick="copyHash()">Copy</button>
+            `;
+        }
+
+        function loadUrlEncoder(container) {
+            container.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Input URL</label>
+                    <textarea class="form-control" id="urlInput" rows="4" placeholder="Enter URL to encode/decode..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Output</label>
+                    <textarea class="form-control" id="urlOutput" rows="4" readonly></textarea>
+                </div>
+                <button class="btn" onclick="encodeUrl()">Encode</button>
+                <button class="btn btn-secondary" onclick="decodeUrl()">Decode</button>
+                <button class="btn btn-secondary" onclick="copyUrl()">Copy</button>
+            `;
+        }
+
+        function loadBase64Encoder(container) {
+            container.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Input Text</label>
+                    <textarea class="form-control" id="base64Input" rows="4" placeholder="Enter text to encode/decode..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Output</label>
+                    <textarea class="form-control" id="base64Output" rows="4" readonly></textarea>
+                </div>
+                <button class="btn" onclick="encodeBase64()">Encode</button>
+                <button class="btn btn-secondary" onclick="decodeBase64()">Decode</button>
+                <button class="btn btn-secondary" onclick="copyBase64()">Copy</button>
+            `;
+        }
+
+        function loadQRGenerator(container) {
+            container.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Text/URL</label>
+                    <textarea class="form-control" id="qrInput" rows="4" placeholder="Enter text or URL..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">QR Code</label>
+                    <div id="qrOutput" style="display: flex; justify-content: center; padding: 2rem; background: white; border-radius: 8px;">
+                        <canvas id="qrCanvas"></canvas>
+                    </div>
+                </div>
+                <button class="btn" onclick="generateQR()">Generate QR</button>
+                <button class="btn btn-secondary" onclick="downloadQR()">Download</button>
+            `;
+        }
+
+        function loadColorPicker(container) {
+            container.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Pick Color</label>
+                    <input type="color" class="form-control" id="colorPicker" style="height: 50px; cursor: pointer;">
+                </div>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">HEX</div>
+                        <div class="info-value" id="hexValue">#000000</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">RGB</div>
+                        <div class="info-value" id="rgbValue">0, 0, 0</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">HSL</div>
+                        <div class="info-value" id="hslValue">0°, 0%, 0%</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Preview</label>
+                    <div id="colorPreview" style="height: 100px; border-radius: 8px; background: #000000;"></div>
+                </div>
+                <button class="btn" onclick="copyColor('hex')">Copy HEX</button>
+                <button class="btn btn-secondary" onclick="copyColor('rgb')">Copy RGB</button>
+                <button class="btn btn-secondary" onclick="copyColor('hsl')">Copy HSL</button>
+            `;
+            
+            document.getElementById('colorPicker').addEventListener('input', updateColorValues);
+        }
+
+        function loadTextConverter(container) {
+            container.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Input Text</label>
+                    <textarea class="form-control" id="converterInput" rows="4" placeholder="Enter text to convert..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Conversion Type</label>
+                    <select class="form-control" id="conversionType">
+                        <option value="uppercase">UPPERCASE</option>
+                        <option value="lowercase">lowercase</option>
+                        <option value="reverse">Reverse</option>
+                        <option value="binary">To Binary</option>
+                        <option value="hex">To Hex</option>
+                        <option value="base64">To Base64</option>
+                        <option value="url">URL Encode</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Output</label>
+                    <textarea class="form-control" id="converterOutput" rows="4" readonly></textarea>
+                </div>
+                <button class="btn" onclick="convertText()">Convert</button>
+                <button class="btn btn-secondary" onclick="copyConverted()">Copy</button>
+            `;
+        }
+
+        function loadRandomGenerator(container) {
+            container.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Generator Type</label>
+                    <select class="form-control" id="generatorType">
+                        <option value="password">Password</option>
+                        <option value="uuid">UUID</option>
+                        <option value="number">Random Number</option>
+                        <option value="string">Random String</option>
+                        <option value="color">Random Color</option>
+                    </select>
+                </div>
+                <div class="form-group" id="numberOptions" style="display: none;">
+                    <label class="form-label">Range</label>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                        <input type="number" class="form-control" id="minNumber" placeholder="Min" value="1">
+                        <input type="number" class="form-control" id="maxNumber" placeholder="Max" value="100">
+                    </div>
+                </div>
+                <div class="form-group" id="stringOptions" style="display: none;">
+                    <label class="form-label">String Length</label>
+                    <input type="number" class="form-control" id="stringLength" value="10">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Generated Value</label>
+                    <input type="text" class="form-control" id="randomOutput" readonly>
+                </div>
+                <button class="btn" onclick="generateRandom()">Generate</button>
+                <button class="btn btn-secondary" onclick="copyRandom()">Copy</button>
+            `;
+            
+            document.getElementById('generatorType').addEventListener('change', (e) => {
+                document.getElementById('numberOptions').style.display = e.target.value === 'number' ? 'block' : 'none';
+                document.getElementById('stringOptions').style.display = e.target.value === 'string' ? 'block' : 'none';
+            });
+        }
+
+        function loadTerminal(container) {
+            container.innerHTML = `
+                <div class="terminal" id="terminalOutput">
+                    <div class="terminal-line">Welcome to Terminal v1.0</div>
+                    <div class="terminal-line">Type 'help' for commands</div>
+                </div>
+                <div class="terminal-input">
+                    <span class="terminal-prompt">$</span>
+                    <input type="text" id="terminalInput" autofocus>
+                </div>
+            `;
+            
+            const terminalInput = document.getElementById('terminalInput');
+            terminalInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const command = terminalInput.value.trim();
+                    if (command) {
+                        executeCommand(command);
+                        terminalInput.value = '';
+                    }
+                }
+            });
+        }
+
+        function loadNotes(container) {
+            const savedNotes = localStorage.getItem('devNotes') || '';
+            container.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Notes</label>
+                    <textarea class="form-control" id="notesContent" rows="10" placeholder="Enter your notes...">${savedNotes}</textarea>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="color: var(--text-muted);" id="wordCount">0 words</span>
+                    <div>
+                        <button class="btn" onclick="saveNotes()">Save</button>
+                        <button class="btn btn-secondary" onclick="clearNotes()">Clear</button>
+                        <button class="btn btn-secondary" onclick="downloadNotes()">Download</button>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('notesContent').addEventListener('input', updateWordCount);
+            updateWordCount();
+        }
+
+        function loadSessionTracker(container) {
+            const sessionStart = sessionStorage.getItem('sessionStart') || new Date().toISOString();
+            sessionStorage.setItem('sessionStart', sessionStart);
+            
+            container.innerHTML = `
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Session Start</div>
+                        <div class="info-value">${new Date(sessionStart).toLocaleTimeString()}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Duration</div>
+                        <div class="info-value" id="sessionDuration">0s</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Page Views</div>
+                        <div class="info-value">${parseInt(sessionStorage.getItem('pageViews') || 0) + 1}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Status</div>
+                        <div class="info-value" style="color: var(--success-color);">Active</div>
+                    </div>
+                </div>
+                <button class="btn" onclick="resetSession()">Reset Session</button>
+            `;
+            
+            setInterval(() => {
+                const duration = Math.floor((Date.now() - new Date(sessionStart).getTime()) / 1000);
+                const durationEl = document.getElementById('sessionDuration');
+                if (durationEl) {
+                    durationEl.textContent = formatDuration(duration);
+                }
+            }, 1000);
+        }
+
+        function loadActivityLogger(container) {
+            const activities = JSON.parse(localStorage.getItem('activities') || '[]');
+            container.innerHTML = `
+                <div class="terminal" style="max-height: 300px;">
+                    ${activities.slice(-10).map(a => `<div class="terminal-line">[${a.time}] ${a.action}</div>`).join('')}
+                </div>
+                <button class="btn" onclick="clearActivities()">Clear Log</button>
+                <button class="btn btn-secondary" onclick="downloadActivities()">Download</button>
+            `;
+        }
+
+        function loadClearTraces(container) {
+            container.innerHTML = `
+                <div class="form-group">
+                    <label class="form-label">Select Data to Clear</label>
+                    <div style="display: grid; gap: 0.75rem;">
+                        <label><input type="checkbox" id="clearLocalStorage"> Local Storage</label>
+                        <label><input type="checkbox" id="clearSessionStorage"> Session Storage</label>
+                        <label><input type="checkbox" id="clearCookies"> Cookies</label>
+                        <label><input type="checkbox" id="clearCache"> Cache</label>
+                    </div>
+                </div>
+                <div style="color: var(--warning-color); margin-bottom: 1rem;">
+                    ⚠️ This will permanently delete selected data
+                </div>
+                <button class="btn btn-danger" onclick="clearTraces()">Clear Selected</button>
+                <button class="btn btn-secondary" onclick="selectAllTraces()">Select All</button>
+            `;
+        }
+
+        function loadOfflineIndicator(container) {
+            container.innerHTML = `
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Status</div>
+                        <div class="info-value" id="onlineStatus" style="color: var(--success-color);">Online</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Connection Type</div>
+                        <div class="info-value" id="connectionType">Unknown</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Effective Type</div>
+                        <div class="info-value" id="effectiveType">Unknown</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Downlink</div>
+                        <div class="info-value" id="downlink">Unknown</div>
+                    </div>
+                </div>
+                <button class="btn" onclick="refreshConnection()">Refresh</button>
+            `;
+            
+            updateConnectionInfo();
+            window.addEventListener('online', updateConnectionInfo);
+            window.addEventListener('offline', updateConnectionInfo);
+        }
+
+        function loadSelfDestruct(container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 2rem;">
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">💥</div>
+                    <h3 style="color: var(--danger-color); margin-bottom: 1rem;">Self Destruct</h3>
+                    <p style="color: var(--text-secondary); margin-bottom: 2rem;">This will reset everything</p>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="destructConfirm" placeholder="Type 'DESTROY' to confirm">
+                    </div>
+                    <button class="btn btn-danger" onclick="selfDestruct()">INITIATE</button>
+                </div>
+            `;
+        }
+
+        // Tool Functions
+        function generatePassword() {
+            const length = document.getElementById('passwordLength').value;
+            const useUppercase = document.getElementById('uppercase').checked;
+            const useLowercase = document.getElementById('lowercase').checked;
+            const useNumbers = document.getElementById('numbers').checked;
+            const useSymbols = document.getElementById('symbols').checked;
+            
+            let charset = '';
+            if (useUppercase) charset += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (useLowercase) charset += 'abcdefghijklmnopqrstuvwxyz';
+            if (useNumbers) charset += '0123456789';
+            if (useSymbols) charset += '!@#$%^&*()_+-=[]{}|;:,.<>?';
+            
+            if (charset === '') {
+                showNotification('Select at least one character type', 'warning');
+                return;
+            }
+            
+            let password = '';
+            for (let i = 0; i < length; i++) {
+                password += charset.charAt(Math.floor(Math.random() * charset.length));
+            }
+            
+            document.getElementById('passwordOutput').value = password;
+            showNotification('Password generated', 'success');
+        }
+
+        function copyPassword() {
+            copyToClipboard('passwordOutput');
+        }
+
+        function generateHash() {
+            const input = document.getElementById('hashInput').value;
+            const type = document.getElementById('hashType').value;
+            
+            if (!input) {
+                showNotification('Enter text to hash', 'warning');
+                return;
+            }
+            
+            // Simple hash simulation (in real app, use crypto library)
+            let hash = '';
+            for (let i = 0; i < input.length; i++) {
+                hash += input.charCodeAt(i).toString(16);
+            }
+            
+            // Pad to appropriate length based on type
+            while (hash.length < 32) hash += '0';
+            if (type === 'sha1') hash = hash.substring(0, 40);
+            if (type === 'sha256') hash = hash.substring(0, 64);
+            if (type === 'sha512') hash = hash.substring(0, 128);
+            
+            document.getElementById('hashOutput').value = hash;
+            showNotification('Hash generated', 'success');
+        }
+
+        function copyHash() {
+            copyToClipboard('hashOutput');
+        }
+
+        function encodeUrl() {
+            const input = document.getElementById('urlInput').value;
+            if (!input) {
+                showNotification('Enter URL to encode', 'warning');
+                return;
+            }
+            document.getElementById('urlOutput').value = encodeURIComponent(input);
+            showNotification('URL encoded', 'success');
+        }
+
+        function decodeUrl() {
+            const input = document.getElementById('urlInput').value;
+            if (!input) {
+                showNotification('Enter URL to decode', 'warning');
+                return;
+            }
+            try {
+                document.getElementById('urlOutput').value = decodeURIComponent(input);
+                showNotification('URL decoded', 'success');
+            } catch (e) {
+                showNotification('Invalid URL encoding', 'error');
+            }
+        }
+
+        function copyUrl() {
+            copyToClipboard('urlOutput');
+        }
+
+        function encodeBase64() {
+            const input = document.getElementById('base64Input').value;
+            if (!input) {
+                showNotification('Enter text to encode', 'warning');
+                return;
+            }
+            document.getElementById('base64Output').value = btoa(input);
+            showNotification('Base64 encoded', 'success');
+        }
+
+        function decodeBase64() {
+            const input = document.getElementById('base64Input').value;
+            if (!input) {
+                showNotification('Enter text to decode', 'warning');
+                return;
+            }
+            try {
+                document.getElementById('base64Output').value = atob(input);
+                showNotification('Base64 decoded', 'success');
+            } catch (e) {
+                showNotification('Invalid Base64', 'error');
+            }
+        }
+
+        function copyBase64() {
+            copyToClipboard('base64Output');
+        }
+
+        function generateQR() {
+            const text = document.getElementById('qrInput').value;
+            if (!text) {
+                showNotification('Enter text for QR code', 'warning');
+                return;
+            }
+            
+            const canvas = document.getElementById('qrCanvas');
+            const ctx = canvas.getContext('2d');
+            const size = 200;
+            
+            canvas.width = size;
+            canvas.height = size;
+            
+            // Simple QR simulation (in real app, use QR library)
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, size, size);
+            ctx.fillStyle = '#fff';
+            ctx.fillRect(10, 10, size - 20, size - 20);
+            
+            // Draw pattern
+            ctx.fillStyle = '#000';
+            for (let i = 0; i < 20; i++) {
+                for (let j = 0; j < 20; j++) {
+                    if (Math.random() > 0.5) {
+                        ctx.fillRect(20 + i * 8, 20 + j * 8, 6, 6);
+                    }
+                }
+            }
+            
+            showNotification('QR code generated', 'success');
+        }
+
+        function downloadQR() {
+            const canvas = document.getElementById('qrCanvas');
+            const link = document.createElement('a');
+            link.download = 'qrcode.png';
+            link.href = canvas.toDataURL();
+            link.click();
+            showNotification('QR code downloaded', 'success');
+        }
+
+        function updateColorValues() {
+            const color = document.getElementById('colorPicker').value;
+            const r = parseInt(color.substr(1, 2), 16);
+            const g = parseInt(color.substr(3, 2), 16);
+            const b = parseInt(color.substr(5, 2), 16);
+            
+            document.getElementById('hexValue').textContent = color.toUpperCase();
+            document.getElementById('rgbValue').textContent = `${r}, ${g}, ${b}`;
+            document.getElementById('hslValue').textContent = rgbToHsl(r, g, b);
+            document.getElementById('colorPreview').style.background = color;
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255;
+            g /= 255;
+            b /= 255;
+            
+            const max = Math.max(r, g, b);
+            const min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+            
+            if (max === min) {
+                h = s = 0;
+            } else {
+                const d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+                    case g: h = ((b - r) / d + 2) / 6; break;
+                    case b: h = ((r - g) / d + 4) / 6; break;
+                }
+            }
+            
+            return `${Math.round(h * 360)}°, ${Math.round(s * 100)}%, ${Math.round(l * 100)}%`;
+        }
+
+        function copyColor(format) {
+            let value = '';
+            switch(format) {
+                case 'hex':
+                    value = document.getElementById('hexValue').textContent;
+                    break;
+                case 'rgb':
+                    value = `rgb(${document.getElementById('rgbValue').textContent})`;
+                    break;
+                case 'hsl':
+                    value = `hsl(${document.getElementById('hslValue').textContent})`;
+                    break;
+            }
+            copyToClipboard(null, value);
+        }
+
+        function convertText() {
+            const input = document.getElementById('converterInput').value;
+            const type = document.getElementById('conversionType').value;
+            
+            if (!input) {
+                showNotification('Enter text to convert', 'warning');
+                return;
+            }
+            
+            let output = '';
+            switch(type) {
+                case 'uppercase':
+                    output = input.toUpperCase();
+                    break;
+                case 'lowercase':
+                    output = input.toLowerCase();
+                    break;
+                case 'reverse':
+                    output = input.split('').reverse().join('');
+                    break;
+                case 'binary':
+                    output = input.split('').map(c => c.charCodeAt(0).toString(2).padStart(8, '0')).join(' ');
+                    break;
+                case 'hex':
+                    output = input.split('').map(c => c.charCodeAt(0).toString(16).padStart(2, '0')).join(' ');
+                    break;
+                case 'base64':
+                    output = btoa(input);
+                    break;
+                case 'url':
+                    output = encodeURIComponent(input);
+                    break;
+            }
+            
+            document.getElementById('converterOutput').value = output;
+            showNotification('Text converted', 'success');
+        }
+
+        function copyConverted() {
+            copyToClipboard('converterOutput');
+        }
+
+        function generateRandom() {
+            const type = document.getElementById('generatorType').value;
+            let output = '';
+            
+            switch(type) {
+                case 'password':
+                    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+                    for (let i = 0; i < 16; i++) {
+                        output += chars.charAt(Math.floor(Math.random() * chars.length));
+                    }
+                    break;
+                case 'uuid':
+                    output = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+                        const r = Math.random() * 16 | 0;
+                        const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                        return v.toString(16);
+                    });
+                    break;
+                case 'number':
+                    const min = parseInt(document.getElementById('minNumber').value) || 1;
+                    const max = parseInt(document.getElementById('maxNumber').value) || 100;
+                    output = Math.floor(Math.random() * (max - min + 1)) + min;
+                    break;
+                case 'string':
+                    const length = parseInt(document.getElementById('stringLength').value) || 10;
+                    const chars2 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+                    for (let i = 0; i < length; i++) {
+                        output += chars2.charAt(Math.floor(Math.random() * chars2.length));
+                    }
+                    break;
+                case 'color':
+                    output = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+                    break;
+            }
+            
+            document.getElementById('randomOutput').value = output;
+            showNotification('Random value generated', 'success');
+        }
+
+        function copyRandom() {
+            copyToClipboard('randomOutput');
+        }
+
+        function executeCommand(command) {
+            const output = document.getElementById('terminalOutput');
+            output.innerHTML += `<div class="terminal-line">$ ${command}</div>`;
+            
+            let response = '';
+            const cmd = command.toLowerCase().split(' ')[0];
+            
+            switch(cmd) {
+                case 'help':
+                    response = 'Available commands: help, clear, date, echo, whoami, ls, exit';
+                    break;
+                case 'clear':
+                    output.innerHTML = '';
+                    return;
+                case 'date':
+                    response = new Date().toString();
+                    break;
+                case 'echo':
+                    response = command.substring(5);
+                    break;
+                case 'whoami':
+                    response = 'developer';
+                    break;
+                case 'ls':
+                    response = 'documents  downloads  music  pictures';
+                    break;
+                case 'exit':
+                    closeModal();
+                    return;
+                default:
+                    response = `Command not found: ${cmd}`;
+            }
+            
+            output.innerHTML += `<div class="terminal-line">${response}</div>`;
+            output.scrollTop = output.scrollHeight;
+        }
+
+        function saveNotes() {
+            const content = document.getElementById('notesContent').value;
+            localStorage.setItem('devNotes', content);
+            showNotification('Notes saved', 'success');
+        }
+
+        function clearNotes() {
+            if (confirm('Clear all notes?')) {
+                document.getElementById('notesContent').value = '';
+                localStorage.removeItem('devNotes');
+                updateWordCount();
+                showNotification('Notes cleared', 'success');
+            }
+        }
+
+        function downloadNotes() {
+            const content = document.getElementById('notesContent').value;
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'notes.txt';
+            a.click();
+            showNotification('Notes downloaded', 'success');
+        }
+
+        function updateWordCount() {
+            const content = document.getElementById('notesContent').value;
+            const words = content.trim().split(/\s+/).filter(w => w.length > 0).length;
+            document.getElementById('wordCount').textContent = `${words} words`;
+        }
+
+        function resetSession() {
+            if (confirm('Reset session?')) {
+                sessionStorage.clear();
+                sessionStorage.setItem('sessionStart', new Date().toISOString());
+                sessionStorage.setItem('pageViews', '0');
+                loadSessionTracker(document.getElementById('modalBody'));
+                showNotification('Session reset', 'success');
+            }
+        }
+
+        function clearActivities() {
+            if (confirm('Clear activity log?')) {
+                localStorage.removeItem('activities');
+                loadActivityLogger(document.getElementById('modalBody'));
+                showNotification('Activity log cleared', 'success');
+            }
+        }
+
+        function downloadActivities() {
+            const activities = JSON.parse(localStorage.getItem('activities') || '[]');
+            const content = activities.map(a => `[${a.time}] ${a.action}`).join('\n');
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'activities.txt';
+            a.click();
+            showNotification('Activities downloaded', 'success');
+        }
+
+        function selectAllTraces() {
+            document.querySelectorAll('#clearLocalStorage, #clearSessionStorage, #clearCookies, #clearCache').forEach(cb => cb.checked = true);
+        }
+
+        function clearTraces() {
+            const clearLocalStorage = document.getElementById('clearLocalStorage').checked;
+            const clearSessionStorage = document.getElementById('clearSessionStorage').checked;
+            const clearCookies = document.getElementById('clearCookies').checked;
+            
+            if (!clearLocalStorage && !clearSessionStorage && !clearCookies) {
+                showNotification('Select data to clear', 'warning');
+                return;
+            }
+            
+            if (confirm('Clear selected data?')) {
+                if (clearLocalStorage) localStorage.clear();
+                if (clearSessionStorage) sessionStorage.clear();
+                if (clearCookies) {
+                    document.cookie.split(';').forEach(c => {
+                        document.cookie = c.replace(/^ +/, '').replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
+                    });
+                }
+                showNotification('Data cleared', 'success');
+            }
+        }
+
+        function updateConnectionInfo() {
+            const online = navigator.onLine;
+            document.getElementById('onlineStatus').textContent = online ? 'Online' : 'Offline';
+            document.getElementById('onlineStatus').style.color = online ? 'var(--success-color)' : 'var(--danger-color)';
+            
+            if (navigator.connection) {
+                document.getElementById('connectionType').textContent = navigator.connection.type || 'Unknown';
+                document.getElementById('effectiveType').textContent = navigator.connection.effectiveType || 'Unknown';
+                document.getElementById('downlink').textContent = navigator.connection.downlink ? `${navigator.connection.downlink} Mbps` : 'Unknown';
+            }
+        }
+
+        function refreshConnection() {
+            updateConnectionInfo();
+            showNotification('Connection info updated', 'success');
+        }
+
+        function selfDestruct() {
+            const confirm = document.getElementById('destructConfirm').value;
+            if (confirm !== 'DESTROY') {
+                showNotification('Type "DESTROY" to confirm', 'warning');
+                return;
+            }
+            
+            if (confirm('This will reset everything. Continue?')) {
+                localStorage.clear();
+                sessionStorage.clear();
+                document.body.innerHTML = '<div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #000; color: #0f0; font-family: monospace;"><h1>SYSTEM DESTROYED</h1></div>';
+            }
+        }
+
+        // Utility Functions
+        function copyToClipboard(elementId, text) {
+            const value = text || document.getElementById(elementId).value;
+            if (!value) {
+                showNotification('Nothing to copy', 'warning');
+                return;
+            }
+            
+            navigator.clipboard.writeText(value).then(() => {
+                showNotification('Copied to clipboard', 'success');
+            }).catch(() => {
+                showNotification('Failed to copy', 'error');
+            });
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            const icon = notification.querySelector('i');
+            
+            notificationText.textContent = message;
+            notification.className = `notification show ${type}`;
+            
+            icon.className = type === 'success' ? 'fas fa-check-circle' :
+                           type === 'error' ? 'fas fa-exclamation-circle' :
+                           'fas fa-exclamation-triangle';
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function formatDuration(seconds) {
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            
+            if (h > 0) return `${h}h ${m}m ${s}s`;
+            if (m > 0) return `${m}m ${s}s`;
+            return `${s}s`;
+        }
+
+        // Log activity
+        function logActivity(action) {
+            const activities = JSON.parse(localStorage.getItem('activities') || '[]');
+            activities.push({
+                time: new Date().toLocaleTimeString(),
+                action: action
+            });
+            
+            if (activities.length > 100) activities.shift();
+            localStorage.setItem('activities', JSON.stringify(activities));
+        }
+
+        // Track page views
+        sessionStorage.setItem('pageViews', (parseInt(sessionStorage.getItem('pageViews') || 0) + 1).toString());
+    </script>
+</section>
         <!-- Contact Section -->
         <section id="contact" class="py-32 px-6">
             <div class="max-w-6xl mx-auto">
@@ -658,7 +2646,7 @@ Driving growth and empowering teams to achieve extraordinary results."</p>
         // --- Navbar Scroll Effect ---
         const nav = document.querySelector('nav');
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 50) {
+            if (window.scrollY > 50) {   
                 nav.classList.add('scrolled');
                 nav.style.borderRadius = '0px';
                 nav.style.maxWidth = '100%';
